@@ -24,11 +24,17 @@ disableConcurrentBuilds()
  checkout([$class: 'GitSCM', branches: [[name: '*/master']],
 doGenerateSubmoduleConfigurations: false, extensions: [], gitTool:
 'Git_Centos', submoduleCfg: [], userRemoteConfigs: [[credentialsId:
-'GitHub_jggonzalezh', url:
-'https://github.com/jggonzalezh/parqueaderoinadn']]])
+'GitHub_jggonzalezh', url:'https://github.com/jggonzalezh/parqueaderoinadn']]])
        }
                  }
       }
+  stage('Compile'){
+            steps{
+                echo "------------>Compile<------------"
+                sh 'gradle --b ./build.gradle compileJava'
+            }
+        }   
+ 
  stage('Unit Tests') {
  steps{
  echo "------------>Unit Tests<------------"
@@ -36,6 +42,7 @@ doGenerateSubmoduleConfigurations: false, extensions: [], gitTool:
 
  }
  }
+ 
  stage('Integration Tests') {
  steps {
  echo "------------>Integration Tests<------------"
@@ -67,6 +74,12 @@ type:'hudson.plugins.sonar.SonarRunnerInstallation'}/bin/sonar-scanner"
  }
  failure {
  echo 'This will run only if failed'
+  //      Send notifications about a Pipeline to an email
+    mail (to: 'gabriel.gonzalez@ceiba.com.co',
+               subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+               body: "Something is wrong with ${env.BUILD_URL}")
+  
+  
  }
  unstable {
  echo 'This will run only if the run was marked as unstable'
