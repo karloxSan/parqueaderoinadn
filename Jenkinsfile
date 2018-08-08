@@ -66,7 +66,7 @@ doGenerateSubmoduleConfigurations: false, extensions: [], gitTool:
  sh 'gradle --b ./build.gradle build -x test'
  }
  }
- }
+ 
  post {
  always {
  echo 'This will always run'
